@@ -20,7 +20,7 @@ def fetch_price():
         data = r.json()
         latest = list(data["Time Series (1min)"].values())[0]
         return float(latest["4. close"])
-    except Exception as e:
+    except Exception:
         return None
 
 def analyze(price):
@@ -28,12 +28,11 @@ def analyze(price):
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "أنت مساعد مالي ذكي، حلل السوق وقرر: شراء، بيع، أو انتظار."},
+            {"role": "system", "content": "أنت مساعد مالي ذكي. هل السعر الحالي يمثل فرصة للشراء، البيع أو الانتظار؟"},
             {"role": "user", "content": msg}
         ]
     )
-    reply = response["choices"][0]["message"]["content"]
-    return reply
+    return response["choices"][0]["message"]["content"]
 
 def send_alert(message):
     bot.send_message(chat_id=chat_id, text=message)
